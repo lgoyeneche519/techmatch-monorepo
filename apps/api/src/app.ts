@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import healthRoutes from "./routes/health.routes";
 import productsRoutes from "./routes/products.routes";
 
 const app = express();
@@ -7,13 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/health", (_req, res) => {
-    res.json({
-        status: "ok",
-        service: "techmatch-api"
-    });
-});
-
+app.use("/health", healthRoutes);
 app.use("/api/products", productsRoutes);
 
 export default app;
