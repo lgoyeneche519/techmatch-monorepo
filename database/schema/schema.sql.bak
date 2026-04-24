@@ -2,6 +2,7 @@
 -- PostgreSQL schema ONLY (sin datos)
 -- Para importar datos, use schema_and_data.sql o cargue los CSV/JSON
 
+-- Cátalogo
 DROP TABLE IF EXISTS product_prices CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS stores CASCADE;
@@ -58,3 +59,17 @@ CREATE INDEX idx_prices_product ON product_prices(product_id);
 CREATE INDEX idx_prices_store ON product_prices(store_id);
 CREATE INDEX idx_prices_price ON product_prices(price);
 CREATE INDEX idx_products_specs ON products USING GIN(specifications);
+
+-- Login
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(150),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_username ON users(username);
