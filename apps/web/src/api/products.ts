@@ -5,8 +5,14 @@ interface ProductsResponse {
     data: Product[];
 }
 
-export const getProducts = async (): Promise<Product[]> => {
-    const response = await fetch("http://localhost:3001/api/products");
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+
+export const getProducts = async (search?: string): Promise<Product[]> => {
+    const url = search
+        ? `${API_URL}/api/products?search=${encodeURIComponent(search)}`
+        : `${API_URL}/api/products`;
+
+    const response = await fetch(url);
 
     if (!response.ok) {
         throw new Error("No fue posible obtener los productos");
