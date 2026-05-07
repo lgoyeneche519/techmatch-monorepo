@@ -1,8 +1,32 @@
 {
-  "hash": "7476d71c",
-  "configHash": "0870fa4d",
-  "lockfileHash": "553f014c",
-  "browserHash": "0c00a22f",
-  "optimized": {},
-  "chunks": {}
+  "hash": "0c56cb2e",
+  "configHash": "255ee77d",
+  "lockfileHash": "83087a8f",
+  "browserHash": "06943cf7",
+  "optimized": {
+    "react-dom/client": {
+      "src": "../../../../node_modules/.pnpm/react-dom@19.2.5_react@19.2.5/node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "61f8b06a",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../../../node_modules/.pnpm/react@19.2.5/node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "a57f4199",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../../../node_modules/.pnpm/react@19.2.5/node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "9a4a1dc5",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "react-CEil7vP0": {
+      "file": "react-CEil7vP0.js",
+      "isDynamicEntry": false
+    }
+  }
 }
