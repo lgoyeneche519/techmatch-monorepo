@@ -57,7 +57,13 @@ export default function ProductCard({ product, onViewDetail }: Props) {
                 )}
                 <p className="product-card__price">{formatPrice(product.min_price)}</p>
                 {product.score !== null && (
-                    <p className="product-card__score">Score: {product.score}/100</p>
+                    <div className="score-tooltip-wrapper">
+                        <p className="product-card__score">Score: {product.score}/100</p>
+                        <span className="score-tooltip-icon">?</span>
+                        <div className="score-tooltip-box">
+                            Score calidad/precio: a menor precio, mayor score. Rango 0–100.
+                        </div>
+                    </div>
                 )}
                 <button
                     className={`product-card__compare-btn${checked ? " active" : ""}${!checked && selected.length >= 3 ? " disabled" : ""
