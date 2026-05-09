@@ -23,6 +23,7 @@ export default function CatalogPage({ searchQuery }: Props) {
             try {
                 const data = await fetchProducts({ ...f, search: searchQuery || f.search });
                 setProducts(data);
+                window.scrollTo({ top: 0, behavior: "smooth" });
             } catch {
                 setError(true);
             } finally {
@@ -36,52 +37,48 @@ export default function CatalogPage({ searchQuery }: Props) {
         load(filters);
     }, [filters, load]);
 
-    const handleFiltersChange = (newFilters: ProductFilters) => {
-        setFilters(newFilters);
-    };
-
-    if (selectedProductId !== null) {
-        return (
-            <ProductDetailPage
-                productId={selectedProductId}
-                onBack={() => setSelectedProductId(null)}
-            />
-        );
-    }
-
     return (
-        <div className="catalog-layout">
-            <FilterPanel filters={filters} onChange={handleFiltersChange} />
+        <>
+            <div className="catalog-layout">
+                <FilterPanel filters={filters} onChange={setFilters} />
 
-            <main className="catalog-main">
-                <h1 className="catalog-title">Catálogo de productos</h1>
-                <p className="catalog-subtitle">
-                    {loading ? "Cargando..." : `${products.length} productos disponibles`}
-                </p>
+                <main className="catalog-main">
+                    <h1 className="catalog-title">Catálogo de productos</h1>
+                    <p className="catalog-subtitle">
+                        {loading ? "Cargando..." : `${products.length} productos disponibles`}
+                    </p>
 
-                {error && (
-                    <div className="catalog-error">
-                        <span>⚠ No fue posible cargar el catálogo. Verifica tu conexión.</span>
-                        <button onClick={() => load(filters)}>Reintentar</button>
+                    {error && (
+                        <div className="catalog-error">
+                            <span>⚠ No fue posible cargar el catálogo.</span>
+                            <button onClick={() => load(filters)}>Reintentar</button>
+                        </div>
+                    )}
+
+                    {!loading && !error && products.length === 0 && (
+                        <div className="catalog-empty">
+                            No se encontraron productos con los filtros seleccionados.
+                        </div>
+                    )}
+
+                    <div className="catalog-grid">
+                        {products.map((product) => (
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                                onViewDetail={setSelectedProductId}
+                            />
+                        ))}
                     </div>
-                )}
+                </main>
+            </div>
 
-                {!loading && !error && products.length === 0 && (
-                    <div className="catalog-empty">
-                        No se encontraron productos con los filtros seleccionados.
-                    </div>
-                )}
-
-                <div className="catalog-grid">
-                    {products.map((product) => (
-                        <ProductCard
-                            key={product.id}
-                            product={product}
-                            onViewDetail={setSelectedProductId}
-                        />
-                    ))}
-                </div>
-            </main>
-        </div>
+            {selectedProductId !== null && (
+                <ProductDetailPage
+                    productId={selectedProductId}
+                    onClose={() => setSelectedProductId(null)}
+                />
+            )}
+        </>
     );
 }

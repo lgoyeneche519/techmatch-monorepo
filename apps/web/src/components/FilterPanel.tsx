@@ -7,10 +7,14 @@ interface Props {
     onChange: (filters: ProductFilters) => void;
 }
 
+const VISIBLE_TAGS = 4;
+
 export default function FilterPanel({ filters, onChange }: Props) {
     const [data, setData] = useState<FiltersData | null>(null);
     const [localMin, setLocalMin] = useState<string>("");
     const [localMax, setLocalMax] = useState<string>("");
+    const [showAllCategories, setShowAllCategories] = useState(false);
+    const [showAllBrands, setShowAllBrands] = useState(false);
 
     useEffect(() => {
         fetchFiltersData().then(setData).catch(console.error);
@@ -23,8 +27,10 @@ export default function FilterPanel({ filters, onChange }: Props) {
 
     if (!data) return <div className="filter-panel__loading">Cargando filtros...</div>;
 
-    const update = (partial: Partial<ProductFilters>) =>
+    const update = (partial: Partial<ProductFilters>) => {
         onChange({ ...filters, ...partial });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
     const applyPrice = () => {
         update({
@@ -37,7 +43,16 @@ export default function FilterPanel({ filters, onChange }: Props) {
         setLocalMin("");
         setLocalMax("");
         onChange({});
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
+
+    const visibleCategories = showAllCategories
+        ? data.categories
+        : data.categories.slice(0, VISIBLE_TAGS);
+
+    const visibleBrands = showAllBrands
+        ? data.brands
+        : data.brands.slice(0, VISIBLE_TAGS);
 
     return (
         <aside className="filter-panel">
@@ -48,7 +63,6 @@ export default function FilterPanel({ filters, onChange }: Props) {
                 </button>
             </div>
 
-            {/* Ordenar */}
             <div className="filter-panel__group">
                 <label>Ordenar por</label>
                 <select
@@ -62,7 +76,6 @@ export default function FilterPanel({ filters, onChange }: Props) {
                 </select>
             </div>
 
-            {/* Categoría — tags clicables */}
             <div className="filter-panel__group">
                 <label>Categoría</label>
                 <div className="filter-panel__tags">
@@ -72,7 +85,7 @@ export default function FilterPanel({ filters, onChange }: Props) {
                     >
                         Todas
                     </button>
-                    {data.categories.map((c) => (
+                    {visibleCategories.map((c) => (
                         <button
                             key={c}
                             className={`filter-tag${filters.category === c ? " filter-tag--active" : ""}`}
@@ -81,10 +94,19 @@ export default function FilterPanel({ filters, onChange }: Props) {
                             {c}
                         </button>
                     ))}
+                    {data.categories.length > VISIBLE_TAGS && (
+                        <button
+                            className="filter-panel__show-more"
+                            onClick={() => setShowAllCategories(!showAllCategories)}
+                        >
+                            {showAllCategories
+                                ? "Ver menos −"
+                                : `Ver más +${data.categories.length - VISIBLE_TAGS}`}
+                        </button>
+                    )}
                 </div>
             </div>
 
-            {/* Marca — tags clicables */}
             <div className="filter-panel__group">
                 <label>Marca</label>
                 <div className="filter-panel__tags">
@@ -94,7 +116,7 @@ export default function FilterPanel({ filters, onChange }: Props) {
                     >
                         Todas
                     </button>
-                    {data.brands.map((b) => (
+                    {visibleBrands.map((b) => (
                         <button
                             key={b}
                             className={`filter-tag${filters.brand === b ? " filter-tag--active" : ""}`}
@@ -103,23 +125,32 @@ export default function FilterPanel({ filters, onChange }: Props) {
                             {b}
                         </button>
                     ))}
+                    {data.brands.length > VISIBLE_TAGS && (
+                        <button
+                            className="filter-panel__show-more"
+                            onClick={() => setShowAllBrands(!showAllBrands)}
+                        >
+                            {showAllBrands
+                                ? "Ver menos −"
+                                : `Ver más +${data.brands.length - VISIBLE_TAGS}`}
+                        </button>
+                    )}
                 </div>
             </div>
 
-            {/* Precio */}
             <div className="filter-panel__group">
                 <label>Precio (CLP)</label>
                 <div className="filter-panel__price-row">
                     <input
                         type="number"
-                        placeholder={`Mín`}
+                        placeholder="Mín"
                         value={localMin}
                         onChange={(e) => setLocalMin(e.target.value)}
                     />
                     <span>–</span>
                     <input
                         type="number"
-                        placeholder={`Máx`}
+                        placeholder="Máx"
                         value={localMax}
                         onChange={(e) => setLocalMax(e.target.value)}
                     />

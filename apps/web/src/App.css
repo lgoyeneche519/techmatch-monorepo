@@ -217,8 +217,35 @@
 
 .catalog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 1200px) {
+  .catalog-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .catalog-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .catalog-layout {
+    flex-direction: column;
+  }
+
+  .filter-panel {
+    width: 100%;
+    position: static;
+  }
+}
+
+@media (max-width: 480px) {
+  .catalog-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .catalog-error {
@@ -255,14 +282,16 @@
    FILTER PANEL
 ══════════════════════════════════════ */
 .filter-panel {
-  width: 230px;
+  width: 220px;
   flex-shrink: 0;
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 14px;
   padding: 1.25rem;
   position: sticky;
-  top: 1.5rem;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
 }
 
@@ -956,4 +985,137 @@ nav,
 header {
   position: relative;
   z-index: 10;
+}
+
+/* ── Ver más en filtros ── */
+.filter-tag--hidden {
+  display: none;
+}
+
+.filter-panel__show-more {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: #7c3aed;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 500;
+}
+
+.filter-panel__show-more:hover {
+  text-decoration: underline;
+}
+
+/* ── Modal de detalle ── */
+.product-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.product-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.product-modal__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #f3f4f6;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.product-modal__close:hover {
+  background: #e5e7eb;
+}
+
+.product-modal__content {
+  padding: 1.5rem;
+}
+
+/* ── Tooltip score ── */
+.score-tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.score-tooltip-icon {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #6b7280;
+  font-size: 10px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+}
+
+.score-tooltip-box {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  background: #1f2937;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  width: 220px;
+  line-height: 1.5;
+  z-index: 100;
+}
+
+.score-tooltip-wrapper:hover .score-tooltip-box {
+  display: block;
+}
+
+/* ── Disponibilidad badge ── */
+.availability-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.availability-badge--available {
+  background: #f0fdf4;
+  color: #059669;
+}
+
+.availability-badge--few {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.availability-badge--out {
+  background: #fef2f2;
+  color: #dc2626;
 }
