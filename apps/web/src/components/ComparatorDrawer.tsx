@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useComparator } from "../context/ComparatorContext";
+import { useFavorites } from "../context/FavoritesContext";
 
 const formatPrice = (price: number | null) => {
   if (price == null) return "—";
@@ -12,6 +13,7 @@ const formatPrice = (price: number | null) => {
 
 export default function ComparatorDrawer() {
   const { selected, removeProduct, clearAll } = useComparator();
+  const { toggleFavorite, isFavorite } = useFavorites();
   const [open, setOpen] = useState(false);
 
   if (selected.length === 0) return null;
@@ -22,7 +24,8 @@ export default function ComparatorDrawer() {
   return (
     <>
       <button className="comparator-fab" onClick={() => setOpen(true)}>
-        ⚖ Comparar ({selected.length}/3)
+        <i className="ti ti-scale" aria-hidden="true" />
+        Comparar ({selected.length}/3)
       </button>
 
       {open && (
@@ -45,26 +48,38 @@ export default function ComparatorDrawer() {
                 <thead>
                   <tr>
                     <th className="comparator-table__label-col">Característica</th>
-                    {selected.map((p) => (
-                      <th key={p.id}>
-                        <div className="comparator-table__product-header">
-                          {p.image_url && (
-                            <img src={p.image_url} alt={p.name} />
-                          )}
-                          <span className="comparator-table__product-brand">{p.brand}</span>
-                          <strong className="comparator-table__product-name">{p.name}</strong>
-                          {p.model && (
-                            <span className="comparator-table__product-model">{p.model}</span>
-                          )}
-                          <button
-                            className="comparator-table__remove"
-                            onClick={() => removeProduct(p.id)}
-                          >
-                            ✕ Eliminar
-                          </button>
-                        </div>
-                      </th>
-                    ))}
+                    {selected.map((p) => {
+                      const favorited = isFavorite(p.id);
+                      return (
+                        <th key={p.id}>
+                          <div className="comparator-table__product-header">
+                            {p.image_url && (
+                              <img src={p.image_url} alt={p.name} />
+                            )}
+                            <span className="comparator-table__product-brand">{p.brand}</span>
+                            <strong className="comparator-table__product-name">{p.name}</strong>
+                            {p.model && (
+                              <span className="comparator-table__product-model">{p.model}</span>
+                            )}
+                            <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
+                              <button
+                                className="comparator-table__remove"
+                                onClick={() => removeProduct(p.id)}
+                              >
+                                ✕ Eliminar
+                              </button>
+                              <button
+                                className={`comparator-table__fav${favorited ? " active" : ""}`}
+                                onClick={() => toggleFavorite(p)}
+                                aria-label={favorited ? "Quitar de favoritos" : "Agregar a favoritos"}
+                              >
+                                <i className={`ti ${favorited ? "ti-heart-filled" : "ti-heart"}`} aria-hidden="true" />
+                              </button>
+                            </div>
+                          </div>
+                        </th>
+                      );
+                    })}
                   </tr>
                 </thead>
                 <tbody>
@@ -83,9 +98,7 @@ export default function ComparatorDrawer() {
                       return (
                         <td key={p.id} className={isBest ? "comparator-table__best" : ""}>
                           <strong>{formatPrice(p.min_price)}</strong>
-                          {isBest && (
-                            <span className="comparator-table__badge">🏆 Mejor precio</span>
-                          )}
+                          {isBest && <span className="comparator-table__badge">🏆 Mejor precio</span>}
                         </td>
                       );
                     })}
@@ -97,9 +110,7 @@ export default function ComparatorDrawer() {
                       return (
                         <td key={p.id} className={isBest ? "comparator-table__best" : ""}>
                           <strong>{p.score ?? "—"}/100</strong>
-                          {isBest && (
-                            <span className="comparator-table__badge">⭐ Mejor score</span>
-                          )}
+                          {isBest && <span className="comparator-table__badge">⭐ Mejor score</span>}
                         </td>
                       );
                     })}

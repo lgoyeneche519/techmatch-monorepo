@@ -1,25 +1,25 @@
 import { useState, useEffect, type KeyboardEvent } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
 
 interface NavbarProps {
     onSearch: (query: string) => void;
     onLoginClick: () => void;
+    onFavoritesClick: () => void;
     searchQuery: string;
 }
 
-const Navbar = ({ onSearch, onLoginClick, searchQuery }: NavbarProps) => {
+const Navbar = ({ onSearch, onLoginClick, onFavoritesClick, searchQuery }: NavbarProps) => {
     const { user, logout, isAuthenticated } = useAuth();
+    const { favorites } = useFavorites();
     const [inputValue, setInputValue] = useState(searchQuery);
 
-    // Sincroniza el input cuando searchQuery se limpia desde afuera (logout)
     useEffect(() => {
         setInputValue(searchQuery);
     }, [searchQuery]);
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            onSearch(inputValue.trim());
-        }
+        if (e.key === "Enter") onSearch(inputValue.trim());
     };
 
     const handleClear = () => {
@@ -55,7 +55,7 @@ const Navbar = ({ onSearch, onLoginClick, searchQuery }: NavbarProps) => {
                     </span>
                 </div>
 
-                {/* Buscador — SCRUM-6 */}
+                {/* Buscador */}
                 <div style={{ flex: 1, position: "relative", maxWidth: "480px" }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
@@ -97,8 +97,27 @@ const Navbar = ({ onSearch, onLoginClick, searchQuery }: NavbarProps) => {
                     )}
                 </div>
 
-                {/* Auth — SCRUM-31 */}
-                <div style={{ marginLeft: "auto", flexShrink: 0 }}>
+                {/* Botón Favoritos */}
+                <button
+                    className={`navbar-fav-btn${favorites.length > 0 ? " has-favorites" : ""}`}
+                    onClick={onFavoritesClick}
+                    aria-label="Mis favoritos"
+                >
+                    <i className={`ti ${favorites.length > 0 ? "ti-heart-filled" : "ti-heart"}`} aria-hidden="true" />
+                    {favorites.length > 0 && (
+                        <span className="navbar-fav-badge">
+                            {favorites.length}
+                        </span>
+                    )}
+                    {favorites.length > 0 && (
+                        <span style={{ fontSize: "12px", fontWeight: 600, marginLeft: 4, color: "#ef4444" }}>
+                            Favoritos
+                        </span>
+                    )}
+                </button>
+
+                {/* Auth */}
+                <div style={{ flexShrink: 0 }}>
                     {isAuthenticated ? (
                         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                             <div style={{
